@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { stringify } from 'querystring'
 import consola from 'consola'
-import { byteSize, isProbe, nextRequest, parseCacheLifetime, processCache, resetProcessCache, watchCredentials } from './utils/processCache'
+import { byteSize, isProbe, nextRequest, parseCacheLifetime, processCache, processCacheGeneration, resetProcessCache, watchCredentials } from './utils/processCache'
 
 // Shared JSON:API index cache. Keyed by the Axios instance, which carries the
 // credentials, then by base URL, endpoint and resource config, so clients on
@@ -611,10 +611,15 @@ class DruxtClient {
       // Concurrent callers, on this client or another sharing the index,
       // wait on one request. A failed request is dropped so the next call retries.
       const key = [this.indexKey, prefix || ''].join(':')
-      const before = this.processCache('index', url)
-      const since = before ? before.generation : undefined
       const started = this.indexCache.generation
-      const request = this.indexRequests[key] || (this.indexRequests[key] = this.fetchIndex(prefix))
+      let request = this.indexRequests[key]
+      if (!request) {
+        request = this.indexRequests[key] = this.fetchIndex(prefix)
+        // The process cache's generation as the request starts, which a call joining it later shares. Taken
+        // whether or not the cache may be used yet, as the response can make it usable.
+        request.since = processCacheGeneration()
+      }
+      const { since } = request
       let fetched
       try {
         fetched = await request

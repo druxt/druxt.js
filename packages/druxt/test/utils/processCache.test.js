@@ -73,16 +73,102 @@ describe('processCache', () => {
     expect(hasCredentials(intercepted(bearer, { fulfilled: async (config) => config }))).toBe(true)
   })
 
-  test('hasCredentials - an @nuxtjs/auth-next refresh interceptor leaves the cache on', () => {
+  // An instance with request interceptors, whose responses pass its watch.
+  const watched = (...handlers) => {
+    const instance = intercepted(...handlers)
+    const responses = []
+    instance.interceptors.response = { use: (ok, fail) => responses.push({ ok, fail }) }
+    watchCredentials(instance)
+    instance.respond = (headers = {}) => responses[0].ok({ config: { headers } })
+    // A request Axios sent fails with `request`, and with `response` once Drupal answers.
+    instance.fail = (headers = {}) => responses[0].fail({ config: { headers }, request: {} }).catch(() => {})
+    // A request interceptor's rejection reaches the response handlers too, before anything is sent.
+    instance.failBeforeSend = (headers = {}) => responses[0].fail({ config: { headers } }).catch(() => {})
+    return instance
+  }
+
+  test('an @nuxtjs/auth-next refresh interceptor leaves the cache on once a response shows no credentials', () => {
     // auth-next adds an async request interceptor when $auth starts, on the
     // server too and whether or not anyone is signed in. Its token goes on the
     // defaults, which the cache reads already.
-    const refresh = async (config) => config
-    const instance = intercepted(refresh)
+    const instance = watched(async (config) => config)
+    expect(processCache('index', { axios: instance })).toBeNull()
+
+    instance.respond()
     expect(processCache('index', { axios: instance })).not.toBeNull()
 
     instance.defaults.headers.common.Authorization = 'Bearer token'
     expect(processCache('index', { axios: instance })).toBeNull()
+  })
+
+  test('a token an async interceptor adds is never served a cached response', () => {
+    // An anonymous request stores the page.
+    processCache('content', { axios: axios() }).set('page', 'anonymous', 60)
+
+    // The probe cannot run the interceptor, so the first request goes to Drupal, which shows the token.
+    const instance = watched(async (config) => ({ ...config, headers: { ...config.headers, Authorization: 'Bearer token' } }))
+    expect(processCache('content', { axios: instance })).toBeNull()
+    instance.respond({ Authorization: 'Bearer token' })
+    expect(processCache('content', { axios: instance })).toBeNull()
+  })
+
+  test('an interceptor that returns a promise is treated as an async one', () => {
+    const instance = watched((config) => Promise.resolve(config))
+    expect(processCache('content', { axios: instance })).toBeNull()
+    // A failed response shows the request as sent too.
+    return instance.fail().then(() => {
+      expect(processCache('content', { axios: instance })).not.toBeNull()
+    })
+  })
+
+  test('an interceptor that fails before the request is sent leaves the cache withheld', async () => {
+    // As an auth interceptor whose token refresh throws: the config it rejects with never went out.
+    const instance = watched(async (config) => config)
+    await instance.failBeforeSend()
+    expect(processCache('content', { axios: instance })).toBeNull()
+
+    // Credentials it shows still withhold the cache for good.
+    const signed = watched(async (config) => config)
+    await signed.failBeforeSend({ Authorization: 'Bearer token' })
+    await signed.fail()
+    expect(processCache('content', { axios: signed })).toBeNull()
+
+    // A request that went out and failed shows the request as sent.
+    await instance.fail()
+    expect(processCache('content', { axios: instance })).not.toBeNull()
+  })
+
+  test('a session cookie pattern registered after a response withholds the cache until the next one', () => {
+    // The interceptor adds a cookie only the second client's pattern names.
+    const instance = watched(async (config) => ({ ...config, headers: { ...config.headers, Cookie: 'SITE_SESSION=abc' } }))
+    instance.respond({ Cookie: 'SITE_SESSION=abc' })
+    expect(processCache('content', { axios: instance })).not.toBeNull()
+
+    // No response has been checked against the new pattern yet.
+    watchCredentials(instance, 'SITE_SESSION')
+    expect(processCache('content', { axios: instance, sessionCookie: 'SITE_SESSION' })).toBeNull()
+    expect(processCache('content', { axios: instance })).toBeNull()
+
+    instance.respond({ Cookie: 'SITE_SESSION=abc' })
+    expect(processCache('content', { axios: instance, sessionCookie: 'SITE_SESSION' })).toBeNull()
+
+    // A pattern the instance already watches changes nothing.
+    const anonymous = watched(async (config) => config)
+    anonymous.respond()
+    watchCredentials(anonymous)
+    expect(processCache('content', { axios: anonymous })).not.toBeNull()
+    watchCredentials(anonymous, 'SITE_SESSION')
+    expect(processCache('content', { axios: anonymous, sessionCookie: 'SITE_SESSION' })).toBeNull()
+    anonymous.respond()
+    expect(processCache('content', { axios: anonymous, sessionCookie: 'SITE_SESSION' })).not.toBeNull()
+  })
+
+  test('an interceptor the probe runs leaves the cache on from the first request', () => {
+    expect(processCache('content', { axios: watched((config) => config) })).not.toBeNull()
+  })
+
+  test('an instance whose skipped interceptor has no watch never uses the cache', () => {
+    expect(processCache('content', { axios: intercepted(async (config) => config) })).toBeNull()
   })
 
   test('hasCredentials - an interceptor whose runWhen declines is skipped', () => {
@@ -99,6 +185,41 @@ describe('processCache', () => {
     const seen = []
     hasCredentials(intercepted((config) => { seen.push(config.headers.has('X-Trace'), config.headers.get('x-trace')); return config }))
     expect(seen).toStrictEqual([false, undefined])
+  })
+
+  test('hasCredentials - an interceptor reading and removing headers as Axios 1 does', () => {
+    // A header an interceptor removes again is not sent, whatever its case.
+    const removed = []
+    expect(hasCredentials(intercepted((config) => {
+      config.headers.setAuthorization('Bearer token')
+      removed.push(config.headers.delete('authorization'), config.headers.delete('X-Missing'))
+      return config
+    }))).toBe(false)
+    expect(removed).toStrictEqual([true, false])
+
+    // One that only adds a token when none is set reads the probe's headers as a request's.
+    const read = []
+    expect(hasCredentials(intercepted((config) => {
+      read.push(config.headers.hasAuthorization(), config.headers.getAuthorization())
+      if (!config.headers.hasAuthorization()) config.headers.setAuthorization('Bearer token')
+      read.push(config.headers.hasAuthorization(), config.headers.getAuthorization())
+      return config
+    }))).toBe(true)
+    expect(read).toStrictEqual([false, undefined, true, 'Bearer token'])
+
+    // toJSON() gives the headers alone, without the methods, as a logging interceptor would print them.
+    const logged = []
+    hasCredentials(intercepted((config) => {
+      config.headers.setContentType('application/vnd.api+json')
+      config.headers.setAccept('application/vnd.api+json')
+      logged.push(config.headers.toJSON(), config.headers.getContentType(), config.headers.hasAccept(), config.headers.getAccept())
+      logged.push(config.headers.toJSON() === config.headers)
+      return config
+    }))
+    expect(logged[0]).toMatchObject({ 'Content-Type': 'application/vnd.api+json', Accept: 'application/vnd.api+json' })
+    expect(Object.values(logged[0]).some((value) => typeof value === 'function')).toBe(false)
+    // A copy, as Axios gives, so changing what it gives leaves the request alone.
+    expect(logged.slice(1)).toStrictEqual(['application/vnd.api+json', true, 'application/vnd.api+json', false])
   })
 
   test('hasCredentials - the probe carries the request URL', () => {

@@ -32,6 +32,28 @@ describe('DruxtClient process cache', () => {
   })
   afterAll(() => { runtime.isServer = isServer })
 
+  test('a token an async interceptor adds is never served the anonymous copy', async () => {
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(1)
+
+    // The interceptor adds the token as the request leaves, where the probe can't see it.
+    const bearer = { Authorization: 'Bearer token' }
+    const signedIn = () => {
+      const instance = requestAxios({}, bearer)
+      const handlers = [{ fulfilled: async (config) => ({ ...config, headers: { ...config.headers, ...bearer } }) }]
+      instance.interceptors.request = { handlers, forEach: (fn) => handlers.forEach(fn) }
+      return instance
+    }
+    const instance = signedIn()
+    const client = new DruxtClient(baseUrl, { axios: instance, cache: {} })
+    await client.getIndex()
+    expect(indexCalls()).toBe(2)
+    // Once a response shows the token, the instance keeps away from the cache.
+    client.clearCache()
+    await client.getIndex()
+    expect(indexCalls()).toBe(3)
+  })
+
   test('never used in a browser', async () => {
     runtime.isServer = () => false
     await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
@@ -196,6 +218,25 @@ describe('DruxtClient process cache', () => {
     expect(indexCalls()).toBe(2)
   })
 
+  test('an index fetched before a clear is not stored after it, on an instance first seen by that request', async () => {
+    // An async interceptor keeps the instance off the cache until a response is seen, so the
+    // request starts without a cache handle and only has one once it returns.
+    const axios = requestAxios()
+    const handlers = [{ fulfilled: async (config) => config }]
+    axios.interceptors.request = { handlers, forEach: (fn) => handlers.forEach(fn) }
+    const inFlight = axios.get
+    axios.get = jest.fn(async (...args) => {
+      const response = await inFlight(...args)
+      resetProcessCache()
+      return response
+    })
+    await new DruxtClient(baseUrl, { axios, cache: {} }).getIndex()
+    expect(indexCalls()).toBe(1)
+
+    await new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).getIndex()
+    expect(indexCalls()).toBe(2)
+  })
+
   test('clearCache empties the index and the process cache', async () => {
     const client = new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} })
     await client.getIndex()
@@ -236,5 +277,26 @@ describe('DruxtClient process cache', () => {
     resolvers[1](links('fresh'))
     expect(Object.keys(await after)).toStrictEqual(['fresh'])
     expect(Object.keys(client.index[undefined])).toStrictEqual(['fresh'])
+  })
+
+  test('a call that joins an index request across a clear does not store its result', async () => {
+    const axios = requestAxios()
+    const resolvers = []
+    const links = (name) => ({ headers: { 'cache-control': 'public, max-age=300' }, data: { links: { [name]: { href: `${baseUrl}/jsonapi/${name}` } } } })
+    axios.get = jest.fn(() => new Promise((resolve) => resolvers.push(resolve)))
+    const client = new DruxtClient(baseUrl, { axios, cache: {} })
+
+    const before = client.getIndex()
+    await Promise.resolve()
+    // Drupal's clear empties the process cache and leaves the client's request running.
+    resetProcessCache()
+    const joined = client.getIndex()
+    await Promise.resolve()
+    expect(axios.get).toHaveBeenCalledTimes(1)
+
+    resolvers[0](links('stale'))
+    await Promise.all([before, joined])
+    // The request started before the clear, whichever call waits on it.
+    expect(new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).processCache('index').get(`${client.indexKey}:`)).toBe(undefined)
   })
 })

@@ -1,3 +1,4 @@
+/* global globalThis */
 import { DruxtClient } from 'druxt'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 
@@ -7,6 +8,9 @@ export const runtime = { isServer: () => typeof window === 'undefined' }
 // Menu results, cached per client so backends and credentials never mix.
 // Each entry holds the request promise, so concurrent callers share one fetch.
 const menuCache = new WeakMap()
+
+// The process cache's generation, which druxt moves on each clear, shared through this symbol.
+const GENERATION = Symbol.for('druxt.processCacheGeneration')
 
 // How long each menu result may be cached: the shortest Cache-Control lifetime of its pages.
 const lifetimes = new WeakMap()
@@ -166,7 +170,9 @@ class DruxtMenu {
         const shared = processCache('menu')
         const stored = shared && shared.get(sharedKey)
         if (stored) return stored
-        const since = shared ? shared.generation : undefined
+        // Taken whether or not the cache may be used yet, as the response can make it usable.
+        const clears = globalThis[GENERATION]
+        const since = clears ? clears.value : (shared ? shared.generation : undefined)
         // The fetch takes the query the key was built from, so settings changed meanwhile cannot part them.
         const result = await (jsonApiMenuItems
           ? this.getJsonApiMenuItems(menuName, settings, prefix, query)
