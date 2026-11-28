@@ -1,46 +1,16 @@
 {
   "name": "Druxt",
-  "image": "mcr.microsoft.com/devcontainers/base:trixie",
-  "features": {
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "16.20.1"
-    },
-    // Installed through gh-release rather than the mise feature: that
-    // feature asks for the "latest" jdx/mise release and does not expose
-    // a tag filter, and mise now publishes vfox-* releases from the same
-    // repository. The regex keeps us on mise's own v-tags while still
-    // tracking the newest one.
-    "ghcr.io/devcontainers-extra/features/gh-release:1": {
-      "repo": "jdx/mise",
-      "binaryNames": "mise",
-      // mise ships the same build as .tar.gz, .tar.xz, .tar.zst and an
-      // extensionless binary; without this the resolver finds four
-      // matches and refuses to choose.
-      "assetRegex": ".tar.gz$",
-      "releaseTagRegex": "^v[0-9]+\\.[0-9]+\\.[0-9]+$"
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    // PHP for examples/drupal, provisioned without Docker by its .devtools.
-    // 8.3 is the backend's composer platform pin and what both CI systems
-    // run. The feature builds PHP against trixie's libsqlite3, which meets
-    // Drupal 11's 3.45 minimum; gd is built in post-create.sh because the
-    // feature leaves it out and Drupal's installer requires it.
-    "ghcr.io/devcontainers/features/php:1": {
-      "version": "8.3",
-      "installComposer": true
-    },
-    // node-gyp toolchain for the monorepo's native addons (deasync, re2):
-    // the base image ships none of it and `yarn install` fails without
-    // it (the same list .gitlab-ci.yml installs for the same reason).
-    // sqlite3 is the CLI drush reaches for; the image libraries are gd's.
-    "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
-      "packages": "python3,python3-setuptools,build-essential,sqlite3,libjpeg-dev,libpng-dev,libwebp-dev,libfreetype-dev,zlib1g-dev"
-    }
-  },
+  // A prebuilt image with the tools, PHP and its extensions, and the
+  // locales. It is defined in .github/.devcontainer and published by
+  // .github/workflows/devcontainer.yml when that definition changes on a
+  // release line, and weekly. The tag is the release line, so update it when
+  // a new line branches. A change to the definition reaches this container
+  // once it has merged and the image has been published again.
+  "image": "ghcr.io/druxt/druxt.js-devcontainer:0.x",
   "containerEnv": {
-    // Node is provided by the devcontainer feature above - .mise.toml's
-    // pin is for host users. Without this, `mise install` tries to build
-    // Node from source inside the container.
+    // Node is provided by the image - .mise.toml's pin is for host users.
+    // Without this, `mise install` tries to build Node from source inside
+    // the container.
     "MISE_DISABLE_TOOLS": "node",
     // Pin the example backend's port so the forward below always matches.
     "WEBSERVER_PORT": "8888"
