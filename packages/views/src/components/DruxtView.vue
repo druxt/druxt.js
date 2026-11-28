@@ -540,14 +540,17 @@ export default {
         // Build query.
         const query = this.getQuery(settings)
 
-        // Execute the request.
-        this.resource = await this.getResults({
+        // Execute the request. The store answers false for a request that
+        // failed with nothing kept, and everything that reads the resource,
+        // the pager's prop among them, expects a resource or nothing.
+        const results = await this.getResults({
           displayId: this.displayId,
           prefix: this.lang,
           query: stringify(query),
           viewId,
           bypassCache
         })
+        this.resource = results || null
       }
     },
 
