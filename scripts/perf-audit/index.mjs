@@ -91,7 +91,7 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
       }
       run[example.name] = {}
       for (const route of example.routes) run[example.name][route] = await measureRoute(example, route, d)
-      if (!opts.skipLighthouse && !example.backendOnly) {
+      if (!opts.skipLighthouse) {
         const dir = join(outDir, example.name)
         await mkdir(dir, { recursive: true })
         await d.runUnlighthouse(example, dir)
@@ -101,7 +101,7 @@ export async function runAudit(opts, deps = {}, examples = config.examples) {
           run[example.name][route].lighthouse = results[route]
         }
       }
-      if (!opts.skipHydration && !example.backendOnly) {
+      if (!opts.skipHydration) {
         for (const route of example.routes) run[example.name][route].hydration = await d.probeHydration(`http://localhost:${example.port}${route}`, config.hydration)
       }
     } catch (err) {
