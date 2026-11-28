@@ -23,21 +23,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 686,
-        "totalMs": 691,
-        "htmlBytes": 249676,
-        "nuxtBytes": 220801,
+        "ttfbMs": 707,
+        "totalMs": 712,
+        "htmlBytes": 250258,
+        "nuxtBytes": 221383,
         "fetchKeys": 129,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 78,
-        "lcpMs": 6243,
+        "performance": 79,
+        "lcpMs": 5870,
         "clsScore": 0,
-        "tbtMs": 33,
-        "fcpMs": 790,
+        "tbtMs": 45,
+        "fcpMs": 805,
         "requests": 28,
-        "bytes": 968356,
+        "bytes": 978630,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -69,21 +69,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 747,
-        "totalMs": 760,
-        "htmlBytes": 221305,
-        "nuxtBytes": 193859,
+        "ttfbMs": 800,
+        "totalMs": 809,
+        "htmlBytes": 222067,
+        "nuxtBytes": 194621,
         "fetchKeys": 138,
         "errorState": null
       },
       "lighthouse": {
         "performance": 76,
-        "lcpMs": 7443,
+        "lcpMs": 7520,
         "clsScore": 0,
-        "tbtMs": 34,
-        "fcpMs": 796,
+        "tbtMs": 65,
+        "fcpMs": 805,
         "requests": 30,
-        "bytes": 1383560,
+        "bytes": 1393850,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -115,10 +115,10 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 474,
-        "totalMs": 476,
-        "htmlBytes": 144554,
-        "nuxtBytes": 119748,
+        "ttfbMs": 483,
+        "totalMs": 485,
+        "htmlBytes": 144884,
+        "nuxtBytes": 120078,
         "fetchKeys": 113,
         "errorState": null
       },
@@ -126,10 +126,10 @@
         "performance": 100,
         "lcpMs": 777,
         "clsScore": 0,
-        "tbtMs": 22,
+        "tbtMs": 34,
         "fcpMs": 777,
         "requests": 19,
-        "bytes": 380712,
+        "bytes": 391022,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -161,27 +161,27 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 504,
-        "totalMs": 506,
-        "htmlBytes": 138105,
-        "nuxtBytes": 115671,
+        "ttfbMs": 533,
+        "totalMs": 534,
+        "htmlBytes": 138512,
+        "nuxtBytes": 116078,
         "fetchKeys": 85,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 98,
-        "lcpMs": 2414,
+        "performance": 91,
+        "lcpMs": 3495,
         "clsScore": 0,
-        "tbtMs": 20,
-        "fcpMs": 773,
+        "tbtMs": 26,
+        "fcpMs": 794,
         "requests": 19,
-        "bytes": 494918,
+        "bytes": 505236,
         "postLoadApiCalls": 0
       },
       "hydration": {
         "serverNodes": 85,
         "discardedNodes": 0,
-        "layoutShift": 0.185
+        "layoutShift": 0.16
       }
     },
     "/en/recipe-category/main-courses": {
@@ -207,21 +207,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 497,
-        "totalMs": 498,
-        "htmlBytes": 118481,
-        "nuxtBytes": 99829,
+        "ttfbMs": 464,
+        "totalMs": 465,
+        "htmlBytes": 118803,
+        "nuxtBytes": 100151,
         "fetchKeys": 74,
         "errorState": null
       },
       "lighthouse": {
-        "performance": 100,
-        "lcpMs": 1829,
+        "performance": 95,
+        "lcpMs": 2896,
         "clsScore": 0,
-        "tbtMs": 20,
-        "fcpMs": 776,
+        "tbtMs": 23,
+        "fcpMs": 789,
         "requests": 18,
-        "bytes": 374701,
+        "bytes": 385011,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -256,20 +256,20 @@
       "ssr": {
         "status": 200,
         "ttfbMs": 40,
-        "totalMs": 41,
-        "htmlBytes": 122425,
-        "nuxtBytes": 49192,
+        "totalMs": 42,
+        "htmlBytes": 122438,
+        "nuxtBytes": 49205,
         "fetchKeys": 1,
         "errorState": null
       },
       "lighthouse": {
         "performance": 96,
-        "lcpMs": 2761,
+        "lcpMs": 2765,
         "clsScore": 0,
-        "tbtMs": 11,
-        "fcpMs": 774,
-        "requests": 14,
-        "bytes": 377995,
+        "tbtMs": 12,
+        "fcpMs": 771,
+        "requests": 13,
+        "bytes": 380705,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -303,21 +303,21 @@
       },
       "ssr": {
         "status": 200,
-        "ttfbMs": 84,
-        "totalMs": 106,
-        "htmlBytes": 386845,
-        "nuxtBytes": 128291,
+        "ttfbMs": 92,
+        "totalMs": 114,
+        "htmlBytes": 386850,
+        "nuxtBytes": 128295,
         "fetchKeys": 1,
         "errorState": null
       },
       "lighthouse": {
         "performance": 100,
-        "lcpMs": 929,
-        "clsScore": 0.022,
-        "tbtMs": 16,
-        "fcpMs": 929,
-        "requests": 11,
-        "bytes": 474623,
+        "lcpMs": 923,
+        "clsScore": 0.047,
+        "tbtMs": 17,
+        "fcpMs": 923,
+        "requests": 10,
+        "bytes": 476597,
         "postLoadApiCalls": 0
       },
       "hydration": {
@@ -325,6 +325,173 @@
         "discardedNodes": 0,
         "layoutShift": 0.037
       }
+    }
+  },
+  "druxt-site-cached": {
+    "/": {
+      "backendCold": {
+        "index": 2,
+        "collections": 19,
+        "resources": 47,
+        "router": 1,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 72
+      },
+      "backendWarm": {
+        "index": 0,
+        "collections": 0,
+        "resources": 0,
+        "router": 0,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 0
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 181,
+        "totalMs": 188,
+        "htmlBytes": 250211,
+        "nuxtBytes": 221336,
+        "fetchKeys": 129,
+        "errorState": null
+      },
+      "lighthouse": null,
+      "hydration": null
+    },
+    "/en/recipes": {
+      "backendCold": {
+        "index": 0,
+        "collections": 2,
+        "resources": 35,
+        "router": 2,
+        "menu": 3,
+        "files": 0,
+        "other": 0,
+        "total": 42
+      },
+      "backendWarm": {
+        "index": 0,
+        "collections": 0,
+        "resources": 0,
+        "router": 0,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 0
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 144,
+        "totalMs": 153,
+        "htmlBytes": 221938,
+        "nuxtBytes": 194492,
+        "fetchKeys": 138,
+        "errorState": null
+      },
+      "lighthouse": null,
+      "hydration": null
+    },
+    "/en/recipes/deep-mediterranean-quiche": {
+      "backendCold": {
+        "index": 0,
+        "collections": 0,
+        "resources": 3,
+        "router": 1,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 4
+      },
+      "backendWarm": {
+        "index": 0,
+        "collections": 0,
+        "resources": 0,
+        "router": 0,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 0
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 82,
+        "totalMs": 84,
+        "htmlBytes": 144776,
+        "nuxtBytes": 119970,
+        "fetchKeys": 113,
+        "errorState": null
+      },
+      "lighthouse": null,
+      "hydration": null
+    },
+    "/en/articles/give-it-a-go-and-grow-your-own-herbs": {
+      "backendCold": {
+        "index": 0,
+        "collections": 0,
+        "resources": 4,
+        "router": 2,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 6
+      },
+      "backendWarm": {
+        "index": 0,
+        "collections": 0,
+        "resources": 0,
+        "router": 0,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 0
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 85,
+        "totalMs": 88,
+        "htmlBytes": 138387,
+        "nuxtBytes": 115953,
+        "fetchKeys": 85,
+        "errorState": null
+      },
+      "lighthouse": null,
+      "hydration": null
+    },
+    "/en/recipe-category/main-courses": {
+      "backendCold": {
+        "index": 0,
+        "collections": 0,
+        "resources": 0,
+        "router": 2,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 2
+      },
+      "backendWarm": {
+        "index": 0,
+        "collections": 0,
+        "resources": 0,
+        "router": 1,
+        "menu": 0,
+        "files": 0,
+        "other": 0,
+        "total": 1
+      },
+      "ssr": {
+        "status": 200,
+        "ttfbMs": 79,
+        "totalMs": 81,
+        "htmlBytes": 118617,
+        "nuxtBytes": 99965,
+        "fetchKeys": 74,
+        "errorState": null
+      },
+      "lighthouse": null,
+      "hydration": null
     }
   }
 }
