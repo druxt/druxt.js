@@ -7,7 +7,7 @@
     {
       "id": "testName",
       "type": "promptString",
-      "description": "Part of a test name to run (empty for every test in the file)",
+      "description": "Part of a test name to run, as a regular expression (empty for every test in the file)",
       "default": ""
     }
   ],
@@ -17,7 +17,7 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
       "args": [
         "--runInBand",
         "--coverage=false",

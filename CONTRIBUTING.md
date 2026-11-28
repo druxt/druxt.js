@@ -216,7 +216,9 @@ While stepping through a test:
 - Run one process with `--runInBand`. Without it the tests run in workers and
   the debugger never stops. The launch configuration and `yarn test:debug` set
   it, and turn coverage off.
-- `-t` runs the tests whose name contains the text you give it.
+- `-t` runs the tests whose name matches the text you give it. Jest reads it as
+  a regular expression, so escape a character such as `[` or `(` that is meant
+  literally.
 - `test/__mocks__/axios.js` replaces Axios in every test. A test that needs a
   real request loads it with `jest.requireActual('axios')`.
 
