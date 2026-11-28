@@ -1,0 +1,19 @@
+{
+  // The extensions the dev container installs, for an editor that is not in
+  // one. Keep the two lists the same: .devcontainer/devcontainer.json says
+  // what each is for. The Vue extension dropped Vue 2 support in 3.1, and a
+  // recommendation cannot name a version, so install 3.0.8 of it by hand.
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "EditorConfig.EditorConfig",
+    "davidanson.vscode-markdownlint",
+    "streetsidesoftware.code-spell-checker",
+    "ChrisChinchilla.vale-vscode",
+    "redhat.vscode-yaml",
+    "timonwong.shellcheck",
+    "github.vscode-github-actions",
+    "GitHub.vscode-pull-request-github",
+    "xdebug.php-debug",
+    "Vue.volar"
+  ]
+}
