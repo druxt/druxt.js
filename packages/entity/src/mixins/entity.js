@@ -92,6 +92,16 @@ const DruxtEntityMixin = {
       schema.config.mode,
       schema.config.schemaType,
     ].join(' '),
+  },
+
+  watch: {
+    // DruxtEntity replaces the value when the stored entity changes, so the
+    // model follows it rather than keep the object it started with.
+    value() {
+      if (this.model !== this.value) {
+        this.model = this.value
+      }
+    }
   }
 }
 

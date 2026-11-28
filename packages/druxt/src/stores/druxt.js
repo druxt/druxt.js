@@ -5,8 +5,11 @@ import Vue from 'vue'
 import { getDrupalJsonApiParams } from '../utils/getDrupalJsonApiParams'
 import { fieldsWithIncludes, includesFor, subIncludes, topIncludes } from '../utils/includes'
 
-const dehydrateResources = ({ commit, queryObject, resources, prefix }) => {
+const dehydrateResources = ({ commit, queryObject, resources, prefix, older = () => false }) => {
   return (resources || []).map((data) => {
+    // A newer copy is stored already, so the reference is to that one.
+    if (older(data, prefix)) return { id: data.id, type: data.type }
+
     // Generate a query link for included resources.
     // This is used to determine if the resource is a partial.
     const link = decodeURI(((data.links || {}).self || {}).href || '')
@@ -77,6 +80,16 @@ const DruxtStore = ({ store }) => {
     if (bypass) bypassed.set(slot, ticket)
     return true
   }
+  // The request whose answer is being stored. Each resource the answer
+  // carries, in a collection or as an include, is left out when a newer copy
+  // of it was stored after the request started.
+  let storing
+  const older = ({ id, type }, prefix) => storing !== undefined
+    && (bypassed.get(JSON.stringify(['resource', type, id, prefix])) || 0) > storing
+  const commitAs = (ticket, commit, ...args) => {
+    storing = ticket
+    try { commit(...args) } finally { storing = undefined }
+  }
 
   const share = (key, request) => {
     if (!inFlight.has(key)) {
@@ -138,12 +151,12 @@ const DruxtStore = ({ store }) => {
         const queryObject = getDrupalJsonApiParams(query).getQueryObject()
 
         // Store and dehydrate collection resources.
-        collection.data = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.data })
+        collection.data = dehydrateResources({ commit: this.commit, older, prefix, queryObject, resources: collection.data })
 
         // Keep the dehydrated refs (don't delete) so a cache hit in
         // getCollection can re-hydrate `included`, same as `data`.
         if (collection.included) {
-          collection.included = dehydrateResources({ commit: this.commit, prefix, queryObject, resources: collection.included })
+          collection.included = dehydrateResources({ commit: this.commit, older, prefix, queryObject, resources: collection.included })
         }
 
         // Recursively merge new collection data into stored collection.
@@ -193,7 +206,7 @@ const DruxtStore = ({ store }) => {
 
         // Extract and store included data.
         if (resource.included) {
-          dehydrateResources({ commit: this.commit, prefix, queryObject, resources: resource.included })
+          dehydrateResources({ commit: this.commit, older, prefix, queryObject, resources: resource.included })
           delete resource.included
         }
 
@@ -328,7 +341,7 @@ const DruxtStore = ({ store }) => {
 
           // Store the collection in the DruxtStore, unless a flush happened meanwhile.
           if (since === generation.value && fresh(JSON.stringify(['collection', type, hash, prefix]), ticket, bypassCache)) {
-            commit('addCollection', { collection: { ...collection }, type, hash, prefix })
+            commitAs(ticket, commit, 'addCollection', { collection: { ...collection }, type, hash, prefix })
           }
 
           return collection
@@ -459,7 +472,7 @@ const DruxtStore = ({ store }) => {
               const response = await this.$druxt.getResource(type, id, getDrupalJsonApiParams(queryObject), prefix, { bypassCache })
               // Stored unless a flush happened meanwhile.
               if (started === generation.value && fresh(JSON.stringify(['resource', type, id, prefix]), ticket, bypassCache)) {
-                commit('addResource', { prefix, resource: { ...response } })
+                commitAs(ticket, commit, 'addResource', { prefix, resource: { ...response } })
               }
               return response
             })
@@ -499,6 +512,31 @@ const DruxtStore = ({ store }) => {
         }
 
         return result
+      },
+
+      /**
+       * Store a JSON:API resource that is newer than any request for it.
+       *
+       * Adds the resource to the store, as `addResource` does. A request that
+       * started before isn't stored over it when its answer arrives, whether it
+       * asked for the resource, a collection that holds it or a resource that
+       * includes it. Use it for Drupal's answer to a save.
+       *
+       * @name storeResource
+       * @action storeResource=resources
+       * @param {object} context - The Vuex action context.
+       * @param {Function} context.commit - Commits mutations to the store.
+       * @param {addResourcePayload} payload - The resource and its prefix.
+       *
+       * @example @lang js
+       * const response = await this.$druxt.updateResource(resource, prefix)
+       * this.$store.dispatch('druxt/storeResource', { resource: response.data, prefix })
+       */
+      storeResource ({ commit }, { resource, prefix }) {
+        const { id, type } = (resource || {}).data || {}
+        // Newer than every request that has started, as a bypass is.
+        if (id && type) bypassed.set(JSON.stringify(['resource', type, id, prefix]), ++requests)
+        commit('addResource', { prefix, resource })
       },
     }
   }

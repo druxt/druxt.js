@@ -520,6 +520,88 @@ describe('DruxtStore', () => {
     expect(store.state.druxt.resources[type][id].undefined.data.attributes.title).toBe('Fresh')
   })
 
+  test('a request that started before storeResource does not replace what it stored', async () => {
+    const type = 'node--page'
+    const mockPage = await getMockResource(type)
+    const { id } = mockPage.data
+    const titled = (title) => ({ ...mockPage, data: { ...mockPage.data, attributes: { ...mockPage.data.attributes, title } } })
+    const stored = () => store.state.druxt.resources[type][id].undefined.data.attributes.title
+
+    const pending = []
+    store.$druxt.getResource = jest.fn(() => new Promise((resolve) => pending.push(resolve)))
+    const ordinary = store.dispatch('druxt/getResource', { type, id })
+    const bypass = store.dispatch('druxt/getResource', { type, id, bypassCache: true })
+    await Promise.resolve()
+    expect(pending).toHaveLength(2)
+
+    // As a save does with Drupal's answer.
+    await store.dispatch('druxt/storeResource', { resource: titled('Saved') })
+    expect(stored()).toBe('Saved')
+    pending[0](titled('Older'))
+    pending[1](titled('Older'))
+    expect((await ordinary).data.attributes.title).toBe('Saved')
+    expect((await bypass).data.attributes.title).toBe('Saved')
+    expect(stored()).toBe('Saved')
+
+    // A request that starts after it is stored as before.
+    store.$druxt.getResource = jest.fn(async () => titled('Newer'))
+    await store.dispatch('druxt/getResource', { type, id, bypassCache: true })
+    expect(stored()).toBe('Newer')
+
+    // Without a resource it stores nothing, as the mutation.
+    await store.dispatch('druxt/storeResource', { resource: {} })
+    expect(stored()).toBe('Newer')
+  })
+
+  test('a collection that started before storeResource does not replace what it stored', async () => {
+    const type = 'node--page'
+    const mockPage = await getMockResource(type)
+    const { id } = mockPage.data
+    const titled = (title) => ({ ...mockPage.data, attributes: { ...mockPage.data.attributes, title } })
+    const other = { ...titled('Other'), id: 'another-page' }
+    const stored = (key = id) => store.state.druxt.resources[type][key].undefined.data.attributes.title
+
+    let answer
+    store.$druxt.getCollection = jest.fn(() => new Promise((resolve) => { answer = resolve }))
+    const collection = store.dispatch('druxt/getCollection', { type })
+    await Promise.resolve()
+
+    await store.dispatch('druxt/storeResource', { resource: { data: titled('Saved') } })
+    answer({ data: [titled('Older'), other], links: { self: { href: `${baseUrl}/jsonapi/node/page` } } })
+    await collection
+
+    // The saved resource stays, and the rest of the collection is stored.
+    expect(stored()).toBe('Saved')
+    expect(stored('another-page')).toBe('Other')
+    expect((await store.dispatch('druxt/getCollection', { type })).data.map((o) => o.attributes.title)).toStrictEqual(['Saved', 'Other'])
+
+    // A collection that starts after it is stored as before.
+    store.$druxt.getCollection = jest.fn(async () => ({ data: [titled('Newer')], links: { self: { href: `${baseUrl}/jsonapi/node/page` } } }))
+    await store.dispatch('druxt/getCollection', { type, bypassCache: true })
+    expect(stored()).toBe('Newer')
+  })
+
+  test('an include that started before storeResource does not replace what it stored', async () => {
+    const type = 'node--page'
+    const mockPage = await getMockResource(type)
+    const { id } = mockPage.data
+    const titled = (title) => ({ ...mockPage.data, attributes: { ...mockPage.data.attributes, title } })
+    const parent = { type: 'node--article', id: 'parent', attributes: { title: 'Parent' }, relationships: { field_page: { data: { type, id } } } }
+    const stored = () => store.state.druxt.resources[type][id].undefined.data.attributes.title
+
+    let answer
+    store.$druxt.getResource = jest.fn(() => new Promise((resolve) => { answer = resolve }))
+    const request = store.dispatch('druxt/getResource', { type: parent.type, id: parent.id, query: { include: 'field_page' } })
+    await Promise.resolve()
+
+    await store.dispatch('druxt/storeResource', { resource: { data: titled('Saved') } })
+    answer({ data: parent, included: [titled('Older')], links: { self: { href: `${baseUrl}/jsonapi/node/article/parent?include=field_page` } } })
+    await request
+
+    expect(stored()).toBe('Saved')
+    expect(store.state.druxt.resources[parent.type].parent.undefined.data.attributes.title).toBe('Parent')
+  })
+
   test('a revisit takes from each related resource only the includes its type has', async () => {
     // A page's paragraphs share one include path, as a page query asks for
     // `field_content.field_media` across every paragraph type.

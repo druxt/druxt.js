@@ -3,7 +3,36 @@ import merge from 'deepmerge'
 import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import DruxtDebug from 'druxt/dist/components/DruxtDebug.vue'
 import DruxtModule from 'druxt/dist/components/DruxtModule.vue'
+import Vue from 'vue'
 import { mapActions } from 'vuex'
+
+/**
+ * The JSON of entity data without its included resources, which is what an
+ * edit is compared with.
+ *
+ * @param {object} data - The JSON:API resource data.
+ * @return {string} The JSON.
+ */
+const pristineOf = (data) => {
+  const rest = { ...(data || {}) }
+  delete rest.included
+  return JSON.stringify(rest)
+}
+
+/**
+ * The JSON of what the relationships of entity data link to, which is what
+ * included resources belong to.
+ *
+ * @param {object} data - The JSON:API resource data.
+ * @return {string} The JSON.
+ */
+const linkageOf = (data) => {
+  const relationships = (data || {}).relationships || {}
+  return JSON.stringify(Object.keys(relationships).sort().map((key) => [
+    key,
+    [].concat((relationships[key] || {}).data || []).map((o) => [o.type, o.id]),
+  ]))
+}
 
 /**
  * The DruxtEntity component renders a Drupal Content Entity by JSON:API
@@ -145,13 +174,33 @@ export default {
   /** */
   computed: {
     /**
+     * Whether the model holds edits that aren't saved.
+     *
+     * The model is compared with the copy last taken from the store, a fetch or
+     * a save, so an assignment equal to that copy isn't an edit. A component
+     * whose parent passes `value` holds its parent's data and is never dirty.
+     *
+     * @return {boolean} `true` when the model differs from the copy last taken.
+     */
+    dirty() {
+      return this.hasEdits()
+    },
+
+    /**
      * The Entity object.
      *
      * @param {object} vm - The component ViewModel.
      * @param {object} vm.model - The model object.
-     * @return {object} A copy of the entity model, containing the JSON:API attributes, relationships and included resource data.
+     * @param {object} vm.storedEntity - The entity's resource in the store.
+     * @param {object} vm.value - The Vue.js v-model value.
+     * @return {object} A copy of the stored entity, with the model's included resource data, or a copy of the model when nothing is stored or the parent passes `value`.
      */
-    entity: ({ model }) => ({ ...model }),
+    entity: ({ model, storedEntity, value }) => {
+      if ((value !== undefined && value !== null) || !storedEntity) return { ...model }
+      const entity = JSON.parse(JSON.stringify(storedEntity))
+      if ((model || {}).included !== undefined) entity.included = model.included
+      return entity
+    },
 
     /**
      * Entity fields based on Display mode.
@@ -194,6 +243,24 @@ export default {
 
       return fields
     },
+
+    /**
+     * The entity's resource data in the store, under the entity's language.
+     *
+     * @param {object} vm - The component ViewModel.
+     * @param {object} vm.$store - The Vuex store.
+     * @param {string} vm.lang - The current language code.
+     * @param {object} vm.model - The model object.
+     * @param {string} vm.type - The JSON:API resource type.
+     * @param {(boolean|string)} vm.uuid - The entity UUID.
+     * @return {object} The stored JSON:API resource data, or `undefined`.
+     * @private
+     */
+    storedEntity: ({ $store, lang, model, type, uuid }) => {
+      const id = uuid || (model || {}).id
+      if (!id) return undefined
+      return ((((($store.state.druxt || {}).resources || {})[type] || {})[id] || {})[lang] || {}).data
+    },
   },
 
   watch: {
@@ -214,8 +281,75 @@ export default {
     },
 
     uuid() {
+      // Edits belong to one entity: another entity starts with none, in any
+      // language. Dropped here, as the store may hand over the next entity
+      // before the fetch runs.
+      this._druxtDrafts = {}
       this.$fetch()
     },
+  },
+
+  created() {
+    // Kept off the reactive data, so none of it reaches the page payload:
+    // - the JSON of the copy edits are compared with, and the language it is in;
+    // - the language the model is in, which a language change leaves behind
+    //   until the next language loads;
+    // - whether a copy has been taken yet, as the default language has no
+    //   code to tell it from no language;
+    // - each other language's unsaved edits;
+    // - whether the fetch has asked once more after a flush, and whether
+    //   Drupal refused the entity.
+    this._druxtPristine = undefined
+    // Counts the changes of that copy, so `dirty` is worked out again after one.
+    this._druxtPristineVersion = Vue.observable({ value: 0 })
+    this._druxtPristineLang = undefined
+    this._druxtModelLang = undefined
+    this._druxtLoaded = false
+    this._druxtDrafts = {}
+    this._druxtFetchedAgain = false
+    this._druxtRefused = false
+    // The entity, the language and the JSON of what a form's running save sent.
+    this._druxtSaving = undefined
+
+    // The watchers are for the browser. They leave a model the parent passes
+    // alone, and take over when the parent stops passing one.
+    if (this.$isServer) return
+
+    // Follow the entity's resource in the store.
+    this.$watch('storedEntity', (to, from) => {
+      if (to === from) return
+      // After a language switch the lang watcher fetches that translation.
+      if (this._druxtLoaded && this._druxtPristineLang !== this.lang) return
+      // Flushed: keep showing the copy and fetch again.
+      if (!to) {
+        if (from) this.fetchAgain()
+        return
+      }
+      if (this.value !== undefined && this.value !== null) return
+      // The store makes a new object for each write, so a write that changes
+      // nothing, such as this entity's own fetch, leaves the model as it is.
+      if (pristineOf(to) === this._druxtPristine) return
+      // An edit of what a running save sent counts, even one back to the
+      // value from before the save.
+      if (this.hasEdits() || this.editedSinceSent()) return
+      this.setModelFromStore({ ...to, included: (this.model || {}).included })
+    })
+
+    // An entity Drupal refused has nothing in the store to follow. A clear of
+    // the whole store, as after a sign-in, is its cue to ask again.
+    this.$watch(() => (this.$store.state.druxt || {}).resources, (to, from) => {
+      if (to !== from && this._druxtRefused && !this.storedEntity) this.fetchAgain()
+    })
+  },
+
+  beforeMount() {
+    // A server-rendered entity doesn't fetch on the client: the model it was
+    // hydrated with is the copy to compare edits with. Nuxt restores that
+    // model in a created hook that runs after this component's own.
+    if (this.$isServer || (this.value !== undefined && this.value !== null)) return
+    if (typeof this._druxtPristine !== 'string' && (this.model || {}).id) {
+      this.setPristine(this.model)
+    }
   },
 
   mounted() {
@@ -227,6 +361,37 @@ export default {
   },
 
   methods: {
+    /**
+     * Whether the model differs from what a form's running save sent, for
+     * this entity in the model's language. Such an edit is unsaved even when
+     * it matches the copy from before the save.
+     *
+     * @return {boolean} `true` when the model was edited since the save started.
+     * @private
+     */
+    editedSinceSent() {
+      const saving = this._druxtSaving
+      if (!saving || saving.id !== (this.model || {}).id) return false
+      // Not once the language has changed: the model is then put away, and
+      // the next language's takes its place.
+      if (saving.lang !== this._druxtModelLang || saving.lang !== this._druxtPristineLang) return false
+      return pristineOf(this.model) !== saving.sent
+    },
+
+    /**
+     * Fetches again once a running fetch settles, as after a flush. A running
+     * fetch may have read the store before the flush emptied it.
+     *
+     * @return {Promise} The fetch.
+     * @private
+     */
+    async fetchAgain() {
+      // Only Nuxt's fetch can fetch again.
+      if (typeof this.$fetch !== 'function') return
+      if (this._fetchPromise) await this._fetchPromise
+      return this.$fetch()
+    },
+
     /**
      * Builds the query for the JSON:API request.
      *
@@ -276,6 +441,20 @@ export default {
     },
 
     /**
+     * Whether the model differs from the copy last taken, read now rather
+     * than from the cached `dirty`, which can't see that copy change.
+     *
+     * @return {boolean} `true` when the model holds unsaved edits.
+     * @private
+     */
+    hasEdits() {
+      // Read first, so `dirty` follows the copy as well as the model.
+      const version = (this._druxtPristineVersion || {}).value
+      if ((this.value !== undefined && this.value !== null) || typeof this._druxtPristine !== 'string') return false
+      return version !== undefined && pristineOf(this.model) !== this._druxtPristine
+    },
+
+    /**
      * Checks if an Entity field is empty.
      *
      * @param {*} value - Field value.
@@ -291,6 +470,80 @@ export default {
       if (typeof value.data !== 'undefined' && !value.data) return true
 
       return false
+    },
+
+    /**
+     * The JSON of entity data without its included resources, which is what
+     * an edit is compared with.
+     *
+     * @param {object} data - The JSON:API resource data.
+     * @return {string} The JSON.
+     * @private
+     */
+    pristineOf(data) {
+      return pristineOf(data)
+    },
+
+    /**
+     * Sets the model to a copy of stored entity data, and makes that copy the
+     * one edits are compared with.
+     *
+     * @param {object} data - The JSON:API resource data, with any included resource data.
+     * @private
+     */
+    setModelFromStore(data) {
+      this.setPristine(data)
+      this.model = JSON.parse(JSON.stringify(data || {}))
+    },
+
+    /**
+     * Keeps the JSON of the copy edits are compared with, on the instance and
+     * outside `data`, so it stays out of the page payload.
+     *
+     * @param {object} data - The JSON:API resource data.
+     * @param {string} [lang] - The language the data is in, when it isn't the component's.
+     * @private
+     */
+    setPristine(data, lang = this.lang) {
+      this._druxtPristine = pristineOf(data)
+      this._druxtPristineVersion.value += 1
+      this._druxtPristineLang = lang
+      // The language the model is in, which a language change leaves behind
+      // until the next language loads.
+      this._druxtModelLang = lang
+      this._druxtLoaded = true
+    },
+
+    /**
+     * Puts away the previous language's unsaved edits and brings back the
+     * current language's, when the language has changed since the copy edits
+     * are compared with was taken. Each language keeps its own edits.
+     *
+     * @private
+     */
+    switchLanguage() {
+      const from = this._druxtPristineLang
+      // The default language has no code, so "nothing loaded yet" is kept apart.
+      if (!this._druxtLoaded || from === this.lang || (this.model || {}).id !== this.uuid) return
+
+      const drafts = this._druxtDrafts || (this._druxtDrafts = {})
+      // A copy, so an edit made while the next language loads stays out of it.
+      // While a form saves this language, an edit of what it sent is kept as
+      // well, even one back to the value from before the save.
+      if (this.hasEdits() || this.editedSinceSent()) drafts[from] = { model: JSON.parse(JSON.stringify(this.model)), pristine: this._druxtPristine }
+
+      const draft = drafts[this.lang]
+      delete drafts[this.lang]
+      this._druxtPristineLang = this.lang
+      if (draft) {
+        this._druxtPristine = draft.pristine
+        this._druxtPristineVersion.value += 1
+        this.model = draft.model
+        this._druxtModelLang = this.lang
+      } else {
+        this._druxtPristine = undefined
+        this._druxtPristineVersion.value += 1
+      }
     },
 
     /**
@@ -370,6 +623,11 @@ export default {
       }
 
       if (this.uuid && !this.value) {
+        // Edits belong to one entity: another entity starts with none.
+        if ((this.model || {}).id && this.model.id !== this.uuid) this._druxtDrafts = {}
+        this.switchLanguage()
+        const lang = this.lang
+
         // A value the parent sets while the request is pending wins over the
         // response.
         const value = this.value
@@ -393,9 +651,60 @@ export default {
         })
         if (this.value !== value) return
 
-        const entity = { ...(resource.data || {}) }
-        entity.included = resource.included
-        this.model = JSON.parse(JSON.stringify(entity || {}))
+        // The language changed while the request ran, so its answer is for
+        // another language. Fetch this one once this fetch settles.
+        if (this.lang !== lang) {
+          this.$nextTick(() => this.fetchAgain())
+          return
+        }
+
+        // Drupal refused an entity this component already shows, as after a
+        // sign-out: show the error state rather than an empty entity.
+        this._druxtRefused = !!(resource.error && !resource.data)
+        if (this._druxtRefused && (this.model || {}).id === this.uuid) {
+          const err = new Error(resource.error.message)
+          err.response = { status: resource.error.statusCode }
+          throw err
+        }
+
+        // A flush while the request ran keeps the store from storing its
+        // answer, which may be from before the flush, such as a signed-in
+        // copy after a sign-out. Fetch once more, after this fetch settles.
+        // Or the store holds a newer copy that links to other resources than
+        // the answer does, so the answer's included resources aren't its.
+        const stored = this.storedEntity
+        const answered = (resource.data || {}).id && !resource.error
+        const relinked = !!stored && !!answered && linkageOf(stored) !== linkageOf(resource.data)
+        if ((!stored && answered) || relinked) {
+          if (!this._druxtFetchedAgain) {
+            this._druxtFetchedAgain = true
+            this.$nextTick(() => this.fetchAgain())
+          }
+        } else {
+          this._druxtFetchedAgain = false
+        }
+
+        // Unsaved edits to this entity stay, as across a flip of the schema
+        // type or a flush.
+        if ((this.hasEdits() || this.editedSinceSent()) && (this.model || {}).id === this.uuid) return
+
+        // The store's copy when it has one: the answer can be older, as when
+        // a flush overtook this request and something stored the entity since.
+        const entity = { ...(stored || resource.data || {}) }
+        // Included resources belong to what the answer links to. For a copy
+        // that links elsewhere, the fetch that follows brings them.
+        entity.included = relinked
+          ? ((this.model || {}).id === this.uuid ? this.model.included : undefined)
+          : resource.included
+        // The model already holds this copy, taken as the store stored it, and
+        // needs only the included resources.
+        if (pristineOf(entity) === this._druxtPristine && (this.model || {}).id === this.uuid) {
+          if (JSON.stringify(this.model.included) !== JSON.stringify(entity.included)) {
+            this.$set(this.model, 'included', entity.included)
+          }
+          return
+        }
+        this.setModelFromStore(entity)
       }
     },
 
@@ -489,11 +798,13 @@ export default {
           on: {
             input: (value) => {
               const type = !field.relationship ? 'attributes' : 'relationships'
+              // Through Vue, so a field the model didn't have, or one taken
+              // off it, counts as an edit.
               if (value) {
-                this.model[type][id] = value
+                this.$set(this.model[type], id, value)
               }
               else if (this.model[type][id]) {
-                delete this.model[type][id]
+                this.$delete(this.model[type], id)
               }
               this.$emit('input', this.model)
             }

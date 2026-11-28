@@ -223,6 +223,18 @@ export default {
     },
 
     /**
+     * Whether the store still holds the results this view shows. A flush of
+     * them, at any level, removes them.
+     *
+     * @type {boolean}
+     * @private
+     */
+    hasStoredResults() {
+      if (!this.resource) return false
+      return Object.values(this.storedResults).includes(this.resource)
+    },
+
+    /**
      * The View Headers data.
      *
      * @type {object[]}
@@ -289,7 +301,19 @@ export default {
      */
     sorts() {
       return Object.values(((this.display || {}).display_options || {}).sorts || {}).filter(sort => sort.exposed)
-    }
+    },
+
+    /**
+     * The stored results of the view's display in its language, by query.
+     *
+     * @type {object}
+     * @private
+     */
+    storedResults() {
+      const viewId = this.viewId || (((this.view || {}).data || {}).attributes || {}).drupal_internal__id
+      // The views store is registered as one module named `druxt/views`.
+      return ((((this.$store.state['druxt/views'] || {}).results || {})[viewId] || {})[this.displayId] || {})[this.lang] || {}
+    },
   },
 
   watch: {
@@ -365,6 +389,58 @@ export default {
   created() {
     // The filter last fetched for, kept off the reactive data.
     this.lastFilter = JSON.stringify(this.model.filter || {})
+    // Kept off it too: the query the shown results are stored under, whether
+    // the fetch has asked once more after a flush, and whether Drupal refused
+    // the results.
+    this._druxtResultsKey = undefined
+    this._druxtFetchedAgain = false
+    this._druxtRefused = false
+
+    // A flush of the results, such as `druxt/clearCache` on a sign-out, makes
+    // the view fetch them again.
+    // A change of view, display or language empties the slot it reads as
+    // well, and their own watchers fetch for that.
+    if (!this.$isServer) {
+      // The view's own fetch replaces its results when it bypasses the cache.
+      // That isn't a flush, so a change while a fetch runs is checked again
+      // once the fetch settles, which Nuxt holds back for its fetch delay.
+      const slot = () => [this.viewId, this.displayId, this.lang].join(':')
+      // Results stored under the view's query in place of its own, as when
+      // another view of them bypasses the cache, are shown rather than fetched.
+      const follow = () => {
+        const replaced = this._druxtResultsKey && this.storedResults[this._druxtResultsKey]
+        if (replaced) this.resource = replaced
+        return !!replaced
+      }
+      this.$watch(() => [slot(), this.hasStoredResults], ([to, stored], [from, wasStored]) => {
+        if (to !== from || !wasStored || stored) return
+        if (!this._fetchPromise) return follow() || this.fetchAgain()
+        this._fetchPromise.then(() => {
+          if (slot() === to && !this.hasStoredResults && !follow()) this.$fetch()
+        })
+      })
+
+      // A view Drupal refused has no results in the store to follow. A clear
+      // of all results, as after a sign-in, is its cue to ask again.
+      this.$watch(() => (this.$store.state['druxt/views'] || {}).results, (to, from) => {
+        if (to !== from && this._druxtRefused && !this.hasStoredResults) this.fetchAgain()
+      })
+    }
+  },
+
+  beforeMount() {
+    // A server-rendered view doesn't fetch on the client, and the results it
+    // was hydrated with are a copy of the store's. It takes the store's own,
+    // which are what a flush removes.
+    if (this.$isServer) return
+    // No results is what a request Drupal refused on the server leaves.
+    if (this.resource === false) this._druxtRefused = true
+    if (!this.resource || this.hasStoredResults) return
+    const json = JSON.stringify(this.resource)
+    const key = Object.keys(this.storedResults).find((o) => JSON.stringify(this.storedResults[o]) === json)
+    if (key === undefined) return
+    this._druxtResultsKey = key
+    this.resource = this.storedResults[key]
   },
 
   mounted() {
@@ -376,6 +452,20 @@ export default {
   },
 
   methods: {
+    /**
+     * Fetches again once a running fetch settles, as after a flush. A running
+     * fetch may have read the store before the flush emptied it.
+     *
+     * @return {Promise} The fetch.
+     * @private
+     */
+    async fetchAgain() {
+      // Only Nuxt's fetch can fetch again.
+      if (typeof this.$fetch !== 'function') return
+      if (this._fetchPromise) await this._fetchPromise
+      return this.$fetch()
+    },
+
     /**
      * Updates the filter, page and sort the URL holds to the model's values.
      *
@@ -548,6 +638,24 @@ export default {
           viewId,
           bypassCache
         })
+
+        // Drupal refused: the store's action answers `false` for a failed request.
+        this._druxtRefused = !this.resource
+
+        // The query the results are stored under, for the flush watcher.
+        this._druxtResultsKey = Object.keys(this.storedResults).find((key) => this.storedResults[key] === this.resource)
+
+        // A flush while the request ran keeps the store from storing its
+        // answer, which may be from before the flush, such as a signed-in
+        // copy after a sign-out. Fetch once more, after this fetch settles.
+        if (!this.$isServer && this.resource && !this.hasStoredResults) {
+          if (!this._druxtFetchedAgain) {
+            this._druxtFetchedAgain = true
+            this.$nextTick(() => this.fetchAgain())
+          }
+        } else {
+          this._druxtFetchedAgain = false
+        }
       }
     },
 
