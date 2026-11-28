@@ -204,7 +204,7 @@ port 3005, which answers as a recorded Umami site does, runs the example site
 against it and then runs the specs.
 
 To run the same specs against the real example backend, start it first
-(`cd examples/drupal && make build`) and run `yarn test:e2e:drupal`. To have
+(`cd examples/drupal && make build`) and run `yarn test:e2e:drupal`. The specs written for the druxtjs.org site's own backend are skipped, unless `CYPRESS_backendVariant` says otherwise. To have
 the mock running while you work on an example, run `yarn example:mock` and
 start the example with `BASE_URL=http://127.0.0.1:3005`.
 
