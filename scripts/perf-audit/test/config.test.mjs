@@ -24,5 +24,6 @@ test('druxt-site is audited twice: as built, and with the content cache on', asy
   assert.ok(cached, 'no druxt-site-cached example')
   assert.deepEqual(cached.routes, plain.routes)
   assert.notEqual(cached.port, plain.port)
-  assert.equal(cached.backendOnly, true)
+  // Measured in full: the cache changes when the page paints, which Lighthouse scores.
+  assert.equal(cached.backendOnly, undefined)
 })

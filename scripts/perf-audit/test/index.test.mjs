@@ -260,30 +260,3 @@ test('the audit exits 1 when it ends with a step still unsettled', async () => {
   const done = `import { exitWhenDone } from ${JSON.stringify(index)}; exitWhenDone(Promise.resolve())`
   assert.equal(spawnSync(process.execPath, ['--input-type=module', '-e', done], { encoding: 'utf8' }).status, 0)
 })
-
-test('runAudit measures a backendOnly example on the server alone, without a browser', async () => {
-  const outDir = await mkdtemp(join(tmpdir(), 'perf-audit-'))
-  let offset = 0
-  const log = ['[x] 1 [200]: GET /jsonapi\n', '']
-  const deps = {
-    probe: async () => ({ status: 200, ttfbMs: 1, totalMs: 2, htmlBytes: 1, nuxtBytes: 1, fetchKeys: 0, errorState: null }),
-    logSize: async () => 0,
-    readNewLines: async () => ({ text: log.shift() || '', offset: (offset += 1) }),
-    waitForSettle: async () => offset,
-    runUnlighthouse: async () => { throw new Error('Lighthouse should not run for a backendOnly example') },
-    readUnlighthouseResults: async () => ({}),
-    loadBaseline: async () => ({}),
-    saveBaseline: async () => {},
-    checkServer: async () => true,
-    probeHydration: async () => { throw new Error('the hydration probe should not run for a backendOnly example') },
-    now: () => new Date('2026-09-18T00:00:00Z'),
-    commit: () => 'abc1234',
-  }
-  const examples = [{ name: 'druxt-site-cached', port: 3210, routes: ['/'], backendOnly: true }]
-  const result = await runAudit({ examples: null, skipLighthouse: false, skipHydration: false, updateBaseline: false, outDir }, deps, examples)
-  assert.deepEqual(result.errors, [])
-  assert.equal(result.run['druxt-site-cached']['/'].backendCold.total, 1)
-  assert.equal(result.run['druxt-site-cached']['/'].backendWarm.total, 0)
-  assert.equal(result.run['druxt-site-cached']['/'].lighthouse, null)
-  assert.equal(result.run['druxt-site-cached']['/'].hydration, null)
-})

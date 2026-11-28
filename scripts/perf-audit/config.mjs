@@ -22,10 +22,13 @@ export const config = {
     // The same example built with the content cache on, so the audit sees
     // both what a render asks Drupal for and what the cache saves. The counts
     // above are taken without the cache: with it a warm render sends nothing,
-    // which would hide a change in how many requests a render makes. Only the
-    // server is measured here. The cache never reaches a browser, so
-    // Lighthouse and the hydration probe would repeat the entry above.
-    { name: 'druxt-site-cached', port: 3210, routes: siteRoutes, backendOnly: true },
+    // which would hide a change in how many requests a render makes.
+    //
+    // The browser layers run here too. The cache never reaches a browser, but
+    // it answers the server sooner, and that moves when the page paints: with
+    // the cache on, Lighthouse counted a layout shift on these routes that it
+    // scored as none without it.
+    { name: 'druxt-site-cached', port: 3210, routes: siteRoutes },
     // druxt-daisyui and druxt-bootstrapvue only have pages/index.vue, no
     // wildcard router: nothing but the front page exists to audit.
     { name: 'druxt-daisyui', port: 3201, routes: ['/'] },

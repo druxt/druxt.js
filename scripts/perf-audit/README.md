@@ -26,8 +26,9 @@ rebuild the examples before using them for anything else.
 druxt-site is measured twice. `druxt-site` is the example as it is built, without the content cache, so its
 counts are what a render asks Drupal for. `druxt-site-cached` is the same example built with
 `DRUXT_CACHE_CONTENT=true`, into `.nuxt-cached`, so its counts are what is left once the server cache answers: a
-warm render should send nothing. Only the backend and server render layers run for it, since the cache never
-reaches a browser.
+warm render should send nothing. Every layer runs for it, the browser ones too. The cache answers the server
+sooner, which moves when the page paints. Lighthouse has scored a layout shift with the cache on where it
+scored none without it.
 
 Flags: `--example <name>` (repeatable), `--skip-lighthouse`, `--skip-hydration`, `--update-baseline`, `--out <dir>`.
 
