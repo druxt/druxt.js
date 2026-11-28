@@ -34,14 +34,37 @@ concurrency:
 
 env:
   IMAGE: ghcr.io/druxt/druxt.js-devcontainer
-  # A release line is named like `0.x` or `2.1.x`: it ends in `.x` and has
-  # no slash, which rules out a branch such as `feature/name.x`.
-  PUBLISH: ${{ github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') && !contains(github.ref_name, '/') }}
-  # An image that is not published is never pushed, so its tag only names it
-  # locally.
-  TAG: ${{ github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') && !contains(github.ref_name, '/') && github.ref_name || 'check' }}
 
 jobs:
+  # Decides once whether this run publishes, and under which tag, so every
+  # job below works from the same answer.
+  #
+  # Only a run on a release line publishes. The pattern is the whole branch
+  # name, one or two short numbers and `.x`, such as `0.x` or `2.1.x`, so the
+  # tag is always valid and short. A branch
+  # name is otherwise free text: `feature/name.x` and `feature+name.x` are
+  # both valid branches and neither is a valid image tag. Anything that does
+  # not match builds and checks under a local tag and publishes nothing.
+  target:
+    if: github.repository == 'druxt/druxt.js'
+    runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.target.outputs.publish }}
+      tag: ${{ steps.target.outputs.tag }}
+    steps:
+      - id: target
+        env:
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref_name }}
+        run: |
+          if [ "$EVENT" != pull_request ] && [[ "$REF" =~ ^[0-9]{1,4}(\.[0-9]{1,4})?\.x$ ]]; then
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+            echo "tag=${REF}" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "tag=check" >> "$GITHUB_OUTPUT"
+          fi
+
   # The scripts a dev container runs, checked before a build that takes far
   # longer finds the same mistake.
   shellcheck:
@@ -64,7 +87,7 @@ jobs:
   # One job for each architecture, on a runner of that architecture. PHP is
   # compiled while the image builds, which takes hours under emulation.
   build:
-    if: github.repository == 'druxt/druxt.js'
+    needs: target
     strategy:
       fail-fast: false
       matrix:
@@ -83,7 +106,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - if: env.PUBLISH == 'true'
+      - if: needs.target.outputs.publish == 'true'
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ghcr.io
@@ -96,9 +119,9 @@ jobs:
         with:
           subFolder: .github
           imageName: ${{ env.IMAGE }}
-          imageTag: ${{ env.TAG }}-${{ matrix.arch }}
-          cacheFrom: ${{ env.IMAGE }}:${{ env.TAG }}-${{ matrix.arch }}
-          push: ${{ env.PUBLISH == 'true' && 'always' || 'never' }}
+          imageTag: ${{ needs.target.outputs.tag }}-${{ matrix.arch }}
+          cacheFrom: ${{ env.IMAGE }}:${{ needs.target.outputs.tag }}-${{ matrix.arch }}
+          push: ${{ needs.target.outputs.publish == 'true' && 'always' || 'never' }}
           runCmd: |
             set -e
             node --version | grep -q '^v16\.20\.1$'
@@ -111,8 +134,8 @@ jobs:
   # One tag for both architectures, so the dev container names a single image
   # and each machine pulls its own.
   manifest:
-    if: github.repository == 'druxt/druxt.js' && github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') && !contains(github.ref_name, '/')
-    needs: build
+    if: needs.target.outputs.publish == 'true'
+    needs: [target, build]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -127,6 +150,8 @@ jobs:
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Publish one tag for both architectures
+        env:
+          TAG: ${{ needs.target.outputs.tag }}
         run: |
           docker buildx imagetools create \
             --tag "${IMAGE}:${TAG}" \
