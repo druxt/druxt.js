@@ -1,0 +1,108 @@
+name: Dev container image
+
+# Builds the dev container image from .github/.devcontainer and publishes it
+# to GitHub Container Registry, so a new dev container starts from an image
+# and does not build its tools each time.
+#
+# A pull request that changes the definition builds it and runs the checks
+# below, and publishes nothing. A push to a release line publishes the image
+# under that line's name, such as `0.x`. The weekly run picks up updates to
+# the base image and to the tools the features install.
+on:
+  push:
+    branches: ['*.x']
+    paths:
+      - .github/.devcontainer/**
+      - .github/workflows/devcontainer.yml
+  pull_request:
+    paths:
+      - .github/.devcontainer/**
+      - .github/workflows/devcontainer.yml
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: devcontainer-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ghcr.io/druxt/druxt.js-devcontainer
+  # A pull request's image is never pushed, so its tag only names it locally.
+  TAG: ${{ github.event_name == 'pull_request' && 'pr' || github.ref_name }}
+
+jobs:
+  # One job for each architecture, on a runner of that architecture. PHP is
+  # compiled while the image builds, which takes hours under emulation.
+  build:
+    if: github.repository == 'druxt/druxt.js'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - if: github.event_name != 'pull_request'
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      # runCmd runs in a container started from the image just built, as the
+      # image's own user, so it checks what a new dev container would have.
+      - uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3.1900000450
+        with:
+          subFolder: .github
+          imageName: ${{ env.IMAGE }}
+          imageTag: ${{ env.TAG }}-${{ matrix.arch }}
+          cacheFrom: ${{ env.IMAGE }}:${{ env.TAG }}-${{ matrix.arch }}
+          push: ${{ github.event_name == 'pull_request' && 'never' || 'always' }}
+          runCmd: |
+            set -e
+            node --version | grep -q '^v16\.20\.1$'
+            php -r "exit(extension_loaded('gd') && extension_loaded('pdo_sqlite') && extension_loaded('sodium') ? 0 : 1);"
+            composer --version
+            mise --version
+            gh --version
+            locale -a | grep -qi '^en_AU\.utf-\?8$'
+
+  # One tag for both architectures, so the dev container names a single image
+  # and each machine pulls its own.
+  manifest:
+    if: github.repository == 'druxt/druxt.js' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      - name: Publish one tag for both architectures
+        run: |
+          docker buildx imagetools create \
+            --tag "${IMAGE}:${TAG}" \
+            "${IMAGE}:${TAG}-amd64" \
+            "${IMAGE}:${TAG}-arm64"

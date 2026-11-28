@@ -265,3 +265,5 @@ demilestoned
 slurpfile
 retarget
 argjson
+buildx
+imagetools
