@@ -230,11 +230,11 @@ describe('DruxtClient process cache', () => {
 
     resolvers[0](links('stale'))
     expect(Object.keys(await before)).toStrictEqual(['stale'])
-    expect(client.index[undefined]).toBe(undefined)
+    expect(client.index['']).toBe(undefined)
     expect(new DruxtClient(baseUrl, { axios: requestAxios(), cache: {} }).processCache('index').get(`${client.indexKey}:`)).toBe(undefined)
 
     resolvers[1](links('fresh'))
     expect(Object.keys(await after)).toStrictEqual(['fresh'])
-    expect(Object.keys(client.index[undefined])).toStrictEqual(['fresh'])
+    expect(Object.keys(client.index[''])).toStrictEqual(['fresh'])
   })
 })

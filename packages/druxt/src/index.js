@@ -55,6 +55,22 @@ export default DruxtNuxtModule
 export { DruxtStore } from './stores/druxt'
 
 /**
+ * Reads Drupal's languages and the URL prefix each one is served under, at build.
+ *
+ * @example <caption>Reading the languages in a Nuxt module</caption> @lang js
+ * import { DruxtClient, getLanguages } from 'druxt'
+ * const druxt = new DruxtClient('https://api.umami.demo.druxtjs.org')
+ * const languages = await getLanguages(druxt, { build: this.nuxt })
+ * // [{ langcode: 'en', prefix: '', default: true }, { langcode: 'es', prefix: 'es' }]
+ *
+ * @type {Function}
+ * @exports getLanguages
+ * @name getLanguages
+ * @see {@link /api/packages/druxt/utils/languages|getLanguages}
+ */
+export { getLanguages } from './utils/languages'
+
+/**
  * @deprecated in druxt:0.17.0 and is removed from druxt:2.0.0.
  *   Use DruxtModule instead.
  * @see https://druxtjs.org/modules/druxt/deprecations

@@ -1,7 +1,7 @@
 import chalk from 'chalk'
-import { DrupalJsonApiParams } from 'drupal-jsonapi-params'
 import { join, normalize, resolve } from 'path'
 import { DruxtClient } from '../client'
+import { getLanguages } from '../utils/languages'
 import { cacheClearHandler } from './cacheClear'
 import meta from '../../package.json'
 
@@ -60,6 +60,22 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
     proxy: { ...options.proxy || {}, api: false },
   })
 
+  // Each language's URL prefix, read from Drupal unless the options give them, so the client reaches each language
+  // under the prefix Drupal serves it at: `/jsonapi` for a default language without a prefix, rather than `/en/jsonapi`.
+  if (!options.prefixes) {
+    const languages = await getLanguages(druxt, { build: this.nuxt, endpoint: options.endpoint })
+    if (languages.length) options.prefixes = Object.fromEntries(languages.map(({ langcode, prefix }) => [langcode, prefix]))
+    options.defaultLangcode = options.defaultLangcode || (languages.find((o) => o.default) || {}).langcode
+  }
+
+  // The language a request without a langcode asks for. Drupal lets only the language it falls back to have no
+  // prefix. A map with an empty prefix names it. Otherwise Drupal is asked.
+  if (options.prefixes && !options.defaultLangcode) {
+    options.defaultLangcode = Object.keys(options.prefixes).find((langcode) => options.prefixes[langcode] === '') ||
+      ((await getLanguages(druxt, { build: this.nuxt, endpoint: options.endpoint })).find((o) => o.default) || {}).langcode
+  }
+  if (!options.defaultLangcode) delete options.defaultLangcode
+
   // Nuxt proxy integration, when the API or the files proxy is enabled.
   if ((options.proxy || {}).api || (options.proxy || {}).files) {
     const proxies = {}
@@ -70,18 +86,9 @@ const DruxtNuxtModule = async function (moduleOptions = {}) {
       // Main API Endpoint.
       proxies[options.endpoint] = options.baseUrl
 
-      // Langcode prefixed API endpoints.
-      const languageResourceType = 'configurable_language--configurable_language'
-      if (((await druxt.getIndex(languageResourceType)) || {}).href) {
-        const query = new DrupalJsonApiParams().addFields(languageResourceType, ['drupal_internal__id'])
-        const languages = (await druxt.getCollectionAll(languageResourceType, query) || [])
-          .map((o) => o.data)
-          .flat()
-          .filter((o) => !['und', 'zxx'].includes(((o || {}).attributes || {}).drupal_internal__id))
-          .map((o) => o.attributes.drupal_internal__id)
-        for (const langcode of languages) {
-          proxies[`/${langcode}${options.endpoint}`] = options.baseUrl
-        }
+      // The API endpoint under each language's prefix.
+      for (const prefix of Object.values(options.prefixes || {})) {
+        if (prefix) proxies[`/${prefix}${options.endpoint}`] = options.baseUrl
       }
 
       // Decoupled Router Endpoint.
@@ -235,6 +242,10 @@ export { DruxtNuxtModule }
  * @typedef {object} ModuleOptions
  * @property {string} baseUrl - The Base URL of the Drupal JSON:API backend.
  * @property {string} [endpoint=/jsonapi] - The JSON:API endpoint path.
+ * @property {object} [prefixes] - The URL prefix Drupal serves each langcode under, such as `{ en: '', es: 'spanish' }`.
+ *   Read from Drupal at build when not set.
+ * @property {string} [defaultLangcode] - The langcode a request without one asks for, under its prefix. Read from
+ *   `prefixes`, or from Drupal at build, when not set.
  * @property {object} [proxy] - Proxy settings object.
  * @property {boolean} [proxy.api] - Proxy the JSON:API.
  * @property {(boolean|string)} [proxy.files] - Proxy Drupal's site files directory. Provide String to specify multi-site path.

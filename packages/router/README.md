@@ -96,6 +96,37 @@ If no Path is provided, the component will default to the Vue router fullpath.
 
 ---
 
+## Languages
+
+Each Drupal language with a URL prefix gets two routes, both with the language in `meta.langcode`:
+
+| Route                            | Path          | Serves                      |
+| -------------------------------- | ------------- | --------------------------- |
+| `druxt-router__<langcode>__home` | `/<prefix>`   | The language's front page   |
+| `druxt-router__<langcode>`       | `/<prefix>/*` | Every path under the prefix |
+
+A language without a prefix, usually the default, is served by the `druxt-router` wildcard route. The prefixes come from the `prefixes` option of the [`druxt` module](https://druxtjs.org/modules/druxt), which Druxt reads from Drupal at build. Druxt modules on these routes fetch in the route's language.
+
+### With @nuxtjs/i18n
+
+On a Druxt page, Drupal decides the language. [`@nuxtjs/i18n`](https://i18n.nuxtjs.org) is for your own pages and interface strings. Druxt adds its routes after every other module, so i18n doesn't change them, whichever order the modules are listed in.
+
+Set i18n to agree with Drupal:
+
+- `strategy`: `prefix_except_default` when Drupal's default language has no prefix, or `prefix` when every language has one. `no_prefix` and `prefix_and_default` don't match how Drupal serves languages.
+- Set `defaultLocale` to Drupal's default langcode.
+- Give each of the `locales` the Drupal langcode as its `code`, such as `pt-br`. Its `iso` is the language tag, such as `pt-BR`.
+- `detectBrowserLanguage: false`, and no `rootRedirect`. Both redirect by i18n's locale, which can differ from the language Drupal serves the page in.
+- Leave `routesNameSeparator` at its default. With `__`, i18n takes `druxt-router__es` for one of its own routes.
+
+These don't work on Druxt pages yet:
+
+- `$i18n.locale` doesn't follow a Druxt page's URL. Read the page's language from `$route.meta.langcode`, and on the `druxt-router` route, which has none, use `$druxt.options.defaultLangcode`.
+- `switchLocalePath()` doesn't know Drupal's translated paths. Link each language's front page with `$druxt.urlPrefix(langcode)` instead.
+- `nuxtI18nHead({ addSeoAttributes: true })` adds a second canonical link, and hreflang links that all point at the current page. Leave `addSeoAttributes` off for Druxt pages.
+
+---
+
 ## Deprecations
 
 Retired `DruxtRouter` client pass-through methods and `druxtRouter` store

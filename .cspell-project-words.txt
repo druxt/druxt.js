@@ -95,6 +95,7 @@ Knip
 Ksection
 labelledby
 langcode
+langcodes
 lateruntime
 libasound
 libfreetype

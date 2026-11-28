@@ -76,13 +76,15 @@ Translated routes also need a `decoupled_router` patch; see the
 
 ## Settings
 
-| Option        | Type              | Default      | Description                                                              |
-| ------------- | ----------------- | ------------ | ------------------------------------------------------------------------ |
-| `baseUrl`     | `string`          |              | The Drupal backend URL. **Required.**                                    |
-| `endpoint`    | `string`          | `'/jsonapi'` | The JSON:API endpoint path.                                              |
-| `proxy.api`   | `boolean`         | `false`      | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)). |
-| `proxy.files` | `boolean\|string` | `false`      | Proxy Drupal files. A string sets the site.                              |
-| `cache`       | `boolean\|object` | `{}`         | The server cache, see below. `false` turns it off.                       |
+| Option            | Type              | Default       | Description                                                              |
+| ----------------- | ----------------- | ------------- | ------------------------------------------------------------------------ |
+| `baseUrl`         | `string`          |               | The Drupal backend URL. **Required.**                                    |
+| `endpoint`        | `string`          | `'/jsonapi'`  | The JSON:API endpoint path.                                              |
+| `proxy.api`       | `boolean`         | `false`       | Proxy API requests via Nuxt ([guide](https://druxtjs.org/how-to/proxy)). |
+| `proxy.files`     | `boolean\|string` | `false`       | Proxy Drupal files. A string sets the site.                              |
+| `cache`           | `boolean\|object` | `{}`          | The server cache, see below. `false` turns it off.                       |
+| `prefixes`        | `object`          | Read at build | Each langcode's URL prefix, such as `{ en: '', es: 'spanish' }`.         |
+| `defaultLangcode` | `string`          | Read at build | The language a request without a langcode asks for, under its prefix.    |
 
 See the [Nuxt module API](https://druxtjs.org/api/packages/druxt/nuxt) for the full
 options list.

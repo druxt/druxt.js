@@ -53,6 +53,23 @@ describe('DruxtMenu process cache', () => {
     expect(menuCalls).toBe(4)
   })
 
+  test('a menu asked without a langcode is kept by the language it resolves to', async () => {
+    // Two backends' clients alike but for the default language, as `urlPrefix()` resolves it.
+    const prefixes = { en: '', es: 'es' }
+    const withDefault = (defaultLangcode) => {
+      const menu = requestMenu()
+      menu.druxt.urlPrefix = (prefix) => prefixes[prefix || defaultLangcode]
+      return menu
+    }
+    await withDefault('en').get('main')
+    await withDefault('es').get('main')
+    expect(menuCalls).toBe(2)
+
+    // The same language asked for by its langcode shares the entry.
+    await withDefault('en').get('main', undefined, 'es')
+    expect(menuCalls).toBe(2)
+  })
+
   test('a client that withholds the cache neither reads nor fills it', async () => {
     await requestMenu(() => null).get('main')
     expect(store.size).toBe(0)

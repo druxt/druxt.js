@@ -132,7 +132,8 @@ class DruxtMenu {
   /**
    * Gets the menu items JSON:API resources using the configured method.
    *
-   * Results are cached per client and process, keyed by prefix, method and the query the settings build.
+   * Results are cached per client and process, keyed by the URL prefix the language resolves to, the method and the
+   * query the settings build.
    *
    * @example @lang js
    * const menu = await druxtMenu.get('main')
@@ -155,7 +156,8 @@ class DruxtMenu {
     const query = jsonApiMenuItems
       ? this.buildJsonApiMenuItemsQuery(menuName, settings)
       : this.buildMenuLinkContentQuery(menuName, settings)
-    const cacheKey = JSON.stringify([prefix || '', menuName, jsonApiMenuItems, query.getQueryString()])
+    // By the prefix the language resolves to, so clients with another default language don't share a menu.
+    const cacheKey = JSON.stringify([this.urlPrefix(prefix), menuName, jsonApiMenuItems, query.getQueryString()])
     if (!cache.has(cacheKey)) {
       const request = (async () => {
         // A menu fetched by an earlier server request without credentials. The
@@ -206,7 +208,7 @@ class DruxtMenu {
    * @returns {string} The URL, or the JSON:API endpoint when the index has none.
    */
   async menuUrl(menuName, prefix, jsonApiMenuItems, query) {
-    const endpoint = `${prefix || ''}${this.druxt.options.endpoint}`
+    const endpoint = `${this.urlPrefix(prefix)}${this.druxt.options.endpoint}`
     let href
     if (jsonApiMenuItems) {
       // getJsonApiMenuItems() adds the resource to the index with this href when the index has none.
@@ -217,6 +219,20 @@ class DruxtMenu {
     }
     if (!href) return endpoint
     return typeof this.druxt.buildQueryUrl === 'function' ? this.druxt.buildQueryUrl(href, query) : href
+  }
+
+  /**
+   * The URL prefix a langcode is served under, from the Druxt client's `prefixes`, or the langcode itself with a
+   * client that has none.
+   *
+   * @private
+   *
+   * @param {string} [prefix] - (Optional) The langcode, or the JSON:API endpoint prefix.
+   *
+   * @returns {string} The URL prefix.
+   */
+  urlPrefix(prefix) {
+    return typeof this.druxt.urlPrefix === 'function' ? this.druxt.urlPrefix(prefix) : (prefix || '')
   }
 
   /**
@@ -289,9 +305,9 @@ class DruxtMenu {
     const menuItemsResource = `menu_items--${menuName}`
 
     // Add the JSON API Menu items resource to the index.
-    await this.druxt.getIndex(undefined, prefix)
-    if (!(this.druxt.index[prefix][menuItemsResource] || {}).href) {
-      this.druxt.index[prefix][menuItemsResource] = { href: `${prefix || ''}${this.druxt.options.endpoint}/menu_items/${menuName}` }
+    const index = (await this.druxt.getIndex(undefined, prefix)) || {}
+    if (!(index[menuItemsResource] || {}).href) {
+      index[menuItemsResource] = { href: `${this.urlPrefix(prefix)}${this.druxt.options.endpoint}/menu_items/${menuName}` }
     }
 
     const entities = []
