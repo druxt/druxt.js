@@ -12,6 +12,7 @@
       <li><NuxtLink to="/examples/router-modes">Router modes</NuxtLink></li>
       <li><NuxtLink to="/examples/schema">Schema mixin</NuxtLink></li>
       <li><NuxtLink to="/examples/wrappers">Wrapper theming</NuxtLink></li>
+      <li><NuxtLink to="/examples/devel-template">DruxtDevelTemplate: creating a theme component</NuxtLink></li>
       <li><NuxtLink to="/examples/views">DruxtView: default results vs. template injection</NuxtLink></li>
       <li><NuxtLink to="/examples/custom-module">Custom module: DruxtCardGrid</NuxtLink></li>
       <li><NuxtLink to="/examples/reactive-filtering">Reactive filtering: live re-ranking</NuxtLink></li>

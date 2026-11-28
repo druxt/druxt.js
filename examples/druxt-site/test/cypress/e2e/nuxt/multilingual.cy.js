@@ -7,9 +7,7 @@
 //
 // The examples/drupal backend runs this in full: demo_umami installs
 // Spanish alongside English with URL prefixes, and includes Spanish
-// translations of its demo content and configuration. Specs asserting the
-// curated druxtjs.org site content (homepage banners, devel templates)
-// remain gated on CYPRESS_backendVariant; see umami-homepage.cy.js.
+// translations of its demo content and configuration.
 describe('Multilingual', () => {
   it('switches to Spanish from the language block and stays there', () => {
     // Every language has a URL prefix, so the homepage is /en.
@@ -33,7 +31,13 @@ describe('Multilingual', () => {
 
     // View config translations: title and the view header text.
     cy.get('.region-page_title').should('contain.text', 'Inicio')
-    cy.contains('Explore recetas').should('exist')
+    // The Decoupled Drupal mock answers a view's configuration in English
+    // under /es, where Drupal applies the Spanish configuration translation,
+    // so the header text is asserted against a real backend only
+    // (`yarn test:e2e:drupal`, and the test-e2e job).
+    if (!Cypress.env('mock')) {
+      cy.contains('Explore recetas').should('exist')
+    }
 
     // Menu config translations: the main menu links are defined by views
     // menu settings and translated via the language.es collection.
