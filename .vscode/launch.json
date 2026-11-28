@@ -1,18 +1,52 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Listen for XDebug",
-            "type": "php",
-            "request": "launch",
-            "hostname": "0.0.0.0",
-            "port": 9000,
-            "pathMappings": {
-                "/var/www/html": "${workspaceRoot}"
-            }
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "inputs": [
+    {
+      "id": "testName",
+      "type": "promptString",
+      "description": "Part of a test name to run, as a regular expression (empty for every test in the file)",
+      "default": ""
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Jest: debug the open test file",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
+      "args": [
+        "--runInBand",
+        "--coverage=false",
+        "--testTimeout=3600000",
+        "--runTestsByPath",
+        "${file}",
+        "-t",
+        "${input:testName}"
+      ],
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "name": "Node: attach to a process started with --inspect (port 9229)",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Listen for XDebug",
+      "type": "php",
+      "request": "launch",
+      "hostname": "0.0.0.0",
+      "port": 9000,
+      "pathMappings": {
+        "/var/www/html": "${workspaceRoot}"
+      }
+    }
+  ]
 }
