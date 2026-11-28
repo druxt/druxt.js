@@ -18,6 +18,9 @@ corepack enable
 echo "==> Installing monorepo dependencies"
 yarn install
 
+echo "==> Installing Vale and its styles, for the prose lint and its editor extension"
+yarn lint:prose:install
+
 # The image carries PHP with gd, sodium and Xdebug in trigger mode, and the
 # English locales. This check is here to say so plainly when a container was
 # built from something else, such as an image from before a change to

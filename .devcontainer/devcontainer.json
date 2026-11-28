@@ -29,20 +29,31 @@
   "customizations": {
     "vscode": {
       "settings": {
-        // Absolute path to where the gh-release feature installs the
-        // binary. The extension's default bare "mise" value is treated
-        // as workspace-relative, fails to hash, and re-prompts for
-        // approval on every config reload.
-        "mise.binPath": "/usr/local/bin/mise"
+        // The prose lint that guards every push, as you type. The binary
+        // and its styles are installed by post-create.sh, into the place
+        // `yarn lint:prose` uses.
+        "vale.valeCLI.path": "${workspaceFolder}/.vale/bin/vale",
+        "vale.valeCLI.config": "${workspaceFolder}/.vale.ini"
       },
+      // Each one serves a tool this repository runs or a file type it
+      // holds. .vscode/extensions.json recommends the same list to an
+      // editor that is not in a container.
       "extensions": [
-        "hverlin.mise-vscode",
         "dbaeumer.vscode-eslint",
         "EditorConfig.EditorConfig",
         "davidanson.vscode-markdownlint",
         "streetsidesoftware.code-spell-checker",
+        "ChrisChinchilla.vale-vscode",
         "redhat.vscode-yaml",
-        "Vue.volar"
+        "timonwong.shellcheck",
+        "github.vscode-github-actions",
+        "GitHub.vscode-pull-request-github",
+        // For "Listen for XDebug" in .vscode/launch.json and `make debug` in
+        // examples/drupal.
+        "xdebug.php-debug",
+        // Pinned: the components here are Vue 2.7, and the extension dropped
+        // Vue 2 support in 3.1. 3.0.8 is the last release before that.
+        "Vue.volar@3.0.8"
       ]
     }
   },
