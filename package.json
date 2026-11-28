@@ -23,6 +23,7 @@
     "example:druxt-daisyui:test": "start-server-and-test 'yarn example:druxt-daisyui' http://localhost:3001 'npx cypress run --project examples/druxt-daisyui/test --spec \"examples/druxt-daisyui/test/cypress/e2e/nuxt/**/*.cy.js\"'",
     "example:druxt-daisyui:test:open": "start-server-and-test 'yarn example:druxt-daisyui' http://localhost:3001 'npx cypress open --project examples/druxt-daisyui/test'",
     "example:druxt-site": "cd examples/druxt-site && yarn && yarn dev",
+    "example:druxt-site:server": "cd examples/druxt-site && yarn && yarn server",
     "example:druxt-site:storybook": "cd examples/druxt-site && yarn && yarn storybook",
     "example:druxt-site:storybook:test": "start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 'npx cypress run --project examples/druxt-site/test --spec \"examples/druxt-site/test/cypress/e2e/storybook/*.cy.js\"'",
     "example:druxt-site:storybook:test:open": "start-server-and-test 'yarn example:druxt-site:storybook --port 3000' http://localhost:3000 'npx cypress open --project examples/druxt-site/test'",

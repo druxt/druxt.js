@@ -89,6 +89,16 @@ An unstyled DruxtSite pattern index, including an eleven page `/examples/*` demo
 
 `yarn example:druxt-site`
 
+The example builds as a static site, and `nuxt dev` runs without the server
+cache. To see a production server render, with the cache on and a debugger
+port open, run:
+
+`yarn example:druxt-site:server`
+
+That builds for a server and starts it with `--inspect`, so a debugger can
+attach to port 9229. The server loads the built packages, so run `yarn build`
+first, and again after a change to a package.
+
 ### druxt-daisyui
 
 A daisyUI-themed DruxtSite.
