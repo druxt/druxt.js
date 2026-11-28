@@ -25,7 +25,7 @@ giving you `https://github.com/USER/druxt.js` to work from.
    - **VS Code**: clone, open the folder, run `Dev Containers: Reopen in Container`.
    - **GitHub Codespaces**: on the repository page, **Code → Open with Codespaces**.
    - **[DevPod](https://devpod.sh)**: run `devpod up github.com/USER/druxt.js`, or add the same URL as a workspace source in DevPod's desktop app.
-2. Wait for the post-create setup to finish, then build the packages: `yarn build`
+2. Wait for the post-create setup to finish. It installs the dependencies and builds the packages. Build again with `yarn build` after changing one.
 
 The container covers package development, unit tests and linting. It does not provision a Drupal backend. Use the `examples/drupal` `.devtools` flow (below) or a [quickstart repository](https://github.com/druxt/quickstart) when you need one.
 
@@ -198,7 +198,7 @@ Automated end-to-end testing is implemented using Cypress:
 yarn test:e2e
 ```
 
-That doesn't need Drupal. It starts the
+That doesn't need Drupal. It builds the packages, then starts the
 [Decoupled Drupal mock](https://github.com/Decipher/decoupled-drupal-mock) on
 port 3005, which answers as a recorded Umami site does, runs the example site
 against it and then runs the specs.
