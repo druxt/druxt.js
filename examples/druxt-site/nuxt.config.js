@@ -46,10 +46,14 @@ export default {
       clientId: '1a6b8816-26de-4b70-bcdf-919600542f03',
     },
 
-    // The server cache, which also keeps content. It is used by a production
-    // server only, such as `yarn server`, and never by `nuxt dev`. The secret
-    // turns on `POST /_druxt/cache/clear`.
-    cache: { content: true, secret: process.env.DRUXT_CACHE_SECRET },
+    // The server cache. Keeping content is off unless DRUXT_CACHE_CONTENT is
+    // set, as `yarn server` sets it: the performance audit counts the requests
+    // a render sends to Drupal, and a cache that answers them would hide a
+    // change in that count. The secret turns on `POST /_druxt/cache/clear`.
+    cache: {
+      content: process.env.DRUXT_CACHE_CONTENT === 'true',
+      secret: process.env.DRUXT_CACHE_SECRET,
+    },
 
     // Set the JSON:API endpoint, `/jsonapi` by default.
     // endpoint: '/api/v1'
