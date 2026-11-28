@@ -5,9 +5,12 @@ name: Dev container image
 # and does not build its tools each time.
 #
 # A pull request that changes the definition builds it and runs the checks
-# below, and publishes nothing. A push to a release line publishes the image
+# below, and publishes nothing. A run on a release line publishes the image
 # under that line's name, such as `0.x`. The weekly run picks up updates to
-# the base image and to the tools the features install.
+# the base image and to the tools the features install. A run started by hand
+# from any other branch is treated as a pull request is: a branch name such as
+# `feature/x` is not a valid image tag, and a feature branch has no business
+# publishing one.
 on:
   push:
     branches: ['*.x']
@@ -31,8 +34,10 @@ concurrency:
 
 env:
   IMAGE: ghcr.io/druxt/druxt.js-devcontainer
-  # A pull request's image is never pushed, so its tag only names it locally.
-  TAG: ${{ github.event_name == 'pull_request' && 'pr' || github.ref_name }}
+  PUBLISH: ${{ github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') }}
+  # An image that is not published is never pushed, so its tag only names it
+  # locally.
+  TAG: ${{ github.event_name != 'pull_request' && endsWith(github.ref_name, '.x') && github.ref_name || 'check' }}
 
 jobs:
   # The scripts a dev container runs, checked before a build that takes far
@@ -76,7 +81,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - if: github.event_name != 'pull_request'
+      - if: env.PUBLISH == 'true'
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ghcr.io
@@ -91,7 +96,7 @@ jobs:
           imageName: ${{ env.IMAGE }}
           imageTag: ${{ env.TAG }}-${{ matrix.arch }}
           cacheFrom: ${{ env.IMAGE }}:${{ env.TAG }}-${{ matrix.arch }}
-          push: ${{ github.event_name == 'pull_request' && 'never' || 'always' }}
+          push: ${{ env.PUBLISH == 'true' && 'always' || 'never' }}
           runCmd: |
             set -e
             node --version | grep -q '^v16\.20\.1$'
@@ -104,7 +109,7 @@ jobs:
   # One tag for both architectures, so the dev container names a single image
   # and each machine pulls its own.
   manifest:
-    if: github.repository == 'druxt/druxt.js' && github.event_name != 'pull_request'
+    if: github.repository == 'druxt/druxt.js' && github.event_name != 'pull_request' && endsWith(github.ref_name, '.x')
     needs: build
     runs-on: ubuntu-latest
     permissions:
