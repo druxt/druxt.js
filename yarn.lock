@@ -9103,7 +9103,7 @@ __metadata:
   resolution: "druxt-test-utils@workspace:packages/test-utils"
   dependencies:
     drupal-jsonapi-params: 2.3.2
-    jest-mock-axios: 4.9.1
+    jest-mock-axios: 4.10.2
   peerDependencies:
     druxt: "*"
   languageName: unknown
@@ -9157,7 +9157,7 @@ __metadata:
     jest: 29.7.0
     jest-environment-jsdom: ^29.7.0
     jest-junit: 16.0.0
-    jest-mock-axios: 4.9.1
+    jest-mock-axios: 4.10.2
     knip: 2.43.0
     lint-staged: ^14.0.1
     lodash: ^4.18.1
@@ -13300,14 +13300,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-mock-axios@npm:4.9.1":
-  version: 4.9.1
-  resolution: "jest-mock-axios@npm:4.9.1"
+"jest-mock-axios@npm:4.10.2":
+  version: 4.10.2
+  resolution: "jest-mock-axios@npm:4.10.2"
   dependencies:
     "@jest/globals": ^30.5.1
     jest: ^30.5.1
     synchronous-promise: ^2.0.18
-  checksum: 585a8eabe6b5ec548c2efe0b40f41788f3d39ac8224ab3c7e73641a1c6022f3fb00f0acff27102c18bdda38bad306e95380b9bd2b841e548f56c765510af503e
+  checksum: d25df730aab8c66bfd839087d336c1acd8db5a2dcb738f48aa904ffb027d615a00578f3949e1904da17d61933f4e58539d84d762109bc16e38e4d75a0ae40fe9
   languageName: node
   linkType: hard
 
