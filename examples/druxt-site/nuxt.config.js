@@ -50,9 +50,12 @@ export default {
     },
 
     // The server cache. Keeping content is off unless DRUXT_CACHE_CONTENT is
-    // set, as `yarn server` sets it: the performance audit counts the requests
-    // a render sends to Drupal, and a cache that answers them would hide a
-    // change in that count. The secret turns on `POST /_druxt/cache/clear`.
+    // set when the example is built, as `yarn server` sets it. The option is
+    // written into the build, so setting it for `nuxt start` alone does
+    // nothing. It is off by default because the performance audit counts the
+    // requests a render sends to Drupal, and a cache that answers them would
+    // hide a change in that count. The secret turns on
+    // `POST /_druxt/cache/clear`.
     cache: {
       content: process.env.DRUXT_CACHE_CONTENT === 'true',
       secret: process.env.DRUXT_CACHE_SECRET,
