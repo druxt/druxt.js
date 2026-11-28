@@ -22,7 +22,7 @@
     "example:druxt-daisyui": "cd examples/druxt-daisyui && yarn && yarn dev",
     "example:druxt-daisyui:test": "start-server-and-test 'yarn example:druxt-daisyui' http://localhost:3001 'npx cypress run --project examples/druxt-daisyui/test --spec \"examples/druxt-daisyui/test/cypress/e2e/nuxt/**/*.cy.js\"'",
     "example:druxt-daisyui:test:open": "start-server-and-test 'yarn example:druxt-daisyui' http://localhost:3001 'npx cypress open --project examples/druxt-daisyui/test'",
-    "example:mock": "decoupled-drupal-mock-umami --port 3005 --overlay test/.mock-overlays/language-routing-patches.json.gz",
+    "example:mock": "decoupled-drupal-mock-umami --port 3005 --overlay test/.mock-overlays/language-routing-patches.json.gz --extension test/.mock-extensions/views-without-fields.mjs",
     "example:druxt-site": "cd examples/druxt-site && yarn && yarn dev",
     "example:druxt-site:server": "cd examples/druxt-site && yarn && yarn server",
     "example:druxt-site:storybook": "cd examples/druxt-site && yarn && yarn storybook",
