@@ -33,7 +33,13 @@ describe('Multilingual', () => {
 
     // View config translations: title and the view header text.
     cy.get('.region-page_title').should('contain.text', 'Inicio')
-    cy.contains('Explore recetas').should('exist')
+    // The Decoupled Drupal mock answers a view's configuration in English
+    // under /es, where Drupal applies the Spanish configuration translation,
+    // so the header text is asserted against a real backend only
+    // (`yarn test:e2e:drupal`, and the test-e2e job).
+    if (!Cypress.env('mock')) {
+      cy.contains('Explore recetas').should('exist')
+    }
 
     // Menu config translations: the main menu links are defined by views
     // menu settings and translated via the language.es collection.
