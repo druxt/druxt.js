@@ -101,10 +101,15 @@ first, and again after a change to a package.
 
 The server keeps Drupal's answers for as long as Drupal allows, so an edit in
 Drupal can take that long to show. To clear the cache without a restart, start
-the server with a secret and send it with the request:
+the server with a secret:
 
 ```sh
 DRUXT_CACHE_SECRET=example yarn example:druxt-site:server
+```
+
+Once it is listening, send the secret with the request from a second terminal:
+
+```sh
 curl -X POST -H 'X-Druxt-Secret: example' http://localhost:3000/_druxt/cache/clear
 ```
 
