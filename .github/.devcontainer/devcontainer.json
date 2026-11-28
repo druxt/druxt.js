@@ -40,9 +40,12 @@
     // node-gyp toolchain for the monorepo's native addons (deasync, re2):
     // the base image ships none of it and `yarn install` fails without
     // it. sqlite3 is the CLI drush reaches for; the image libraries are
-    // gd's. locales is for the ones the local feature generates.
+    // gd's. locales is for the ones the local feature generates. From
+    // libgtk2.0-0t64 on is what Cypress asks for on Debian, so
+    // `yarn test:e2e` runs in the container: without Xvfb it stops before
+    // the first spec.
     "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
-      "packages": "python3,python3-setuptools,build-essential,sqlite3,libjpeg-dev,libpng-dev,libwebp-dev,libfreetype-dev,zlib1g-dev,locales"
+      "packages": "python3,python3-setuptools,build-essential,sqlite3,libjpeg-dev,libpng-dev,libwebp-dev,libfreetype-dev,zlib1g-dev,locales,libgtk2.0-0t64,libgtk-3-0t64,libgbm-dev,libnotify-dev,libnss3,libxss1,libasound2t64,libxtst6,xauth,xvfb"
     },
     // The parts no published feature covers: PHP's gd extension, the PHP
     // settings the example backend needs, and the locales.

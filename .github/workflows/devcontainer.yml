@@ -130,6 +130,7 @@ jobs:
             mise --version
             gh --version
             locale -a | grep -qi '^en_AU\.utf-\?8$'
+            command -v Xvfb
 
   # One tag for both architectures, so the dev container names a single image
   # and each machine pulls its own.
